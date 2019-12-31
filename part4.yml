@@ -1,0 +1,44 @@
+parts:
+
+  - name: Part 4
+    intro: In this part we will return to our Jenkins instance and setup a pipeline for the kr8sswordz application.
+    steps:
+
+      - cap: Enter the following command to open the Jenkins UI in a web browser. Log in to Jenkins using the username and password you previously set up.  
+        com: minikube service jenkins
+
+      - cap: We’ll want to create a new pipeline for the puzzle service that we previously deployed. On the left in Jenkins, click New Item.
+        com: echo ''
+    
+      - cap: Enter the item name as "Puzzle-Service", click Pipeline, and click OK.
+        com: echo '' 
+
+      - cap: Under the Build Triggers section, select Poll SCM. For the Schedule, enter the the string H/5 * * * * which will poll the Git repo every 5 minutes for changes. 
+        com: echo ''
+
+      - cap: In the Pipeline section, change the Definition to "Pipeline script from SCM". Set the SCM property to GIT. Set the Repository URL to your forked repo (created in Part 2), such as https://github.com/[GIT USERNAME]/kubernetes-ci-cd.git. Set the Script Path to applications/puzzle/Jenkinsfile 
+        com: echo ''
+
+      - cap: When you are finished, click Save. On the left, click Build Now to run the new pipeline. This will rebuild the image from the registry, and redeploy the puzzle pod. You should see it successfully run through the build, push, and deploy steps in a few minutes.
+        com: echo ''
+
+      - cap: View the Kr8sswordz application.
+        com: minikube service kr8sswordz
+        
+      - cap: Spin up several instances of the puzzle service by moving the slider to the right and clicking Scale. For reference, click on the Submit button, noting that the white hit does not register on the puzzle services.
+        com: echo ''
+
+      - cap: Edit applications/puzzle/common/models/crossword.js in your favorite text editor (for example, you can use nano by running the command 'nano applications/puzzle/common/models/crossword.js' in a separate terminal). You'll see a commented section on lines 42-43 that indicates to uncomment a specific line. Uncomment line 43 by deleting the forward slashes and save the file. 
+        com: echo ''
+
+      - cap: Commit and push the change to your forked Git repo. 
+        com: echo ''
+      
+      - cap: In Jenkins, open up the Puzzle-Service pipeline and wait until it triggers a build. It should trigger every 5 minutes.
+        com: echo ''
+ 
+      - cap: After it triggers, observe how the puzzle services disappear in the Kr8sswordz Puzzle app, and how new ones take their place.
+        com: echo ''   
+        
+      - cap: Try clicking Submit to test that hits now register as white.
+        com: echo ''  

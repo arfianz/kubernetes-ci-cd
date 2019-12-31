@@ -1,0 +1,28 @@
+@import '../utils/variables';
+
+.instance-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  align-content: flex-end;
+  height: 28rem;
+  background-color: $true-white;
+  border: 1px solid $brand-dark-gray;
+  box-sizing: border-box;
+}
+
+
+.instance-buttons {
+  .slider-container {
+    width: 75%;
+
+    .slider {
+      width: 90%;
+    }
+  }
+
+  button {
+    width: 25%;
+  }
+}

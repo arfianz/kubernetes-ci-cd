@@ -1,0 +1,74 @@
+parts:
+
+  - name: Part 3
+    intro: This part will have us setup the various applications that will present the crossword puzzle.  We will run a sample etcd cluster as a cache, a pages application containing the front-end, a crossword server using mongodb, and a monitoring and scaling server application. 
+    steps:
+    
+      - cap: Initialize Helm. This will install Tiller (Helm's server) into our Kubernetes cluster. 
+        com: helm init --wait --debug; kubectl rollout status deploy/tiller-deploy -n kube-system
+
+      - cap: We will deploy the etcd operator onto the cluster using a Helm Chart. 
+        com: helm install stable/etcd-operator --version 0.8.0 --name etcd-operator --debug --wait
+
+      - cap: Deploy the etcd cluster and K8s Services for accessing the cluster. 
+        com: kubectl create -f manifests/etcd-cluster.yaml; kubectl create -f manifests/etcd-service.yaml
+      
+      - cap: The crossword application is a multi-tier application whose services depend on each other. We will create three K8s Services so that the applications can communicate with one another.
+        com: kubectl apply -f manifests/all-services.yaml
+      
+      - cap: Now we're going to walk through an initial build of the monitor-scale service.
+        com: docker build -t 127.0.0.1:30400/monitor-scale:`git rev-parse --short HEAD` -f applications/monitor-scale/Dockerfile applications/monitor-scale
+
+      - cap: Once again we'll need to set up the Socat Registry proxy container to push the monitor-scale image to our registry, so let's build it. Feel free to skip this step in case the socat-registry image already exists from Part 2 (to check, run `docker images` in a separate terminal). 
+        com: docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
+
+      - cap: Run the proxy container from the newly created image.
+        com: docker stop socat-registry; docker rm socat-registry; docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry; sleep 10
+
+      - cap: Push the monitor-scale image to the registry.
+        com: docker push 127.0.0.1:30400/monitor-scale:`git rev-parse --short HEAD`
+
+      - cap: The proxy’s work is done, so go ahead and stop it.
+        com: docker stop socat-registry
+      
+      - cap: Open the registry UI and verify that the monitor-scale image is in our local registry.
+        com: minikube service registry-ui
+      
+      - cap: Monitor-scale has the functionality to let us scale our puzzle app up and down through the Kr8sswordz UI, therefore we'll need to do some RBAC work in order to provide monitor-scale with the proper rights.
+        com: kubectl apply -f manifests/monitor-scale-serviceaccount.yaml
+
+      - cap: Create the monitor-scale deployment and the Ingress defining the hostname by which this service will be accessible to the other services. 
+        com: sed 's#127.0.0.1:30400/monitor-scale:$BUILD_TAG#127.0.0.1:30400/monitor-scale:'`git rev-parse --short HEAD`'#' applications/monitor-scale/k8s/deployment.yaml | kubectl apply -f -
+      
+      - cap: Wait for the monitor-scale deployment to finish.
+        com: kubectl rollout status deployment/monitor-scale
+
+      - cap: View pods to see the monitor-scale pod running.
+        com: kubectl get pods
+
+      - cap: View services to see the monitor-scale service. 
+        com: kubectl get services
+
+      - cap: View ingress rules to see the monitor-scale ingress rule.
+        com: kubectl get ingress
+
+      - cap: View deployments to see the monitor-scale deployment.
+        com: kubectl get deployments
+
+      - cap: We will run a script to bootstrap the puzzle and mongo services, creating Docker images and storing them in the local registry. The puzzle.sh script runs through the same build, proxy, push, and deploy steps we just ran through manually for both services.
+        com: scripts/puzzle.sh
+
+      - cap: Check to see if the puzzle and mongo services have been deployed.
+        com: kubectl rollout status deployment/puzzle; kubectl rollout status deployment/mongo
+
+      - cap: Bootstrap the kr8sswordz frontend web application. This script follows the same build proxy, push, and deploy steps that the other services followed.
+        com: scripts/kr8sswordz-pages.sh
+
+      - cap: Check to see if the frontend has been deployed.
+        com: kubectl rollout status deployment/kr8sswordz
+
+      - cap: Check out all the pods that are running.
+        com: kubectl get pods
+
+      - cap: Start the web application in your default browser. You may have to refresh your browser so that the puzzle appears properly.
+        com: minikube service kr8sswordz

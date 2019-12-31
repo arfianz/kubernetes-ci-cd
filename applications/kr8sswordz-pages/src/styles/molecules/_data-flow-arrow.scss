@@ -1,0 +1,22 @@
+@import '../utils/variables';
+
+.data-flow > svg {
+  transform: translateX(40%);
+  height: 5rem;
+  width: 5rem;
+  opacity: 0;
+  fill: $kubernetes-blue;
+  position: absolute;
+  left: -110px;
+  transform: translate(10%, -50%);
+
+  &.active {
+    animation: fade 500ms ease-in-out;
+    animation-direction: alternate;
+    animation-duration: 1s;
+  }
+}
+
+  @keyframes fade {
+    100% {opacity: 1;}
+  }

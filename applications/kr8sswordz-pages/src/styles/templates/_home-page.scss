@@ -1,0 +1,35 @@
+@import '../utils/variables';
+
+.home-page {
+  padding: 1.5rem $page-indent;
+  padding-bottom: 0;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+
+  //Data Flow Arrows
+  .data-flow {
+    width: 7%;
+  }
+
+  //Puzzle Box
+  .crossword-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+  }
+
+  //Instances
+  .instances {
+    width: 35%;
+  }
+
+  //Databases
+  .dbs {
+    width: 25%;
+    .db-image:first-child {
+      border-bottom: 1px solid $brand-dark-gray;
+    }
+  }
+}

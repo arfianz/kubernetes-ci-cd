@@ -1,0 +1,23 @@
+@import '../utils/variables';
+
+button, .button {
+    cursor: pointer;
+    border: none;
+    border-radius: 2px;
+    font-weight: 200;
+    color: $true-white;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+
+    &.primary {
+        background-color: $brand-blue;
+    }
+    &.secondary {
+        background-color: $brand-dark-gray;
+    }
+
+    &.compact {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+}

@@ -1,0 +1,17 @@
+.db-image {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3rem 0;
+
+  img.db {
+    width: 6rem;
+  }
+  img.logo {
+    height: 3.5rem;
+    padding: 0 2rem;
+  }
+
+}
