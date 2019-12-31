@@ -1,4 +1,4 @@
-# Linux.com Kubernetes CI/CD Blog Series by World
+# Linux.com Kubernetes CI/CD Blog Series
 
 To get it up and running, see the following week-by-week Linux.com blog posts, or simply follow the directions below.
 
@@ -69,7 +69,7 @@ minikube dashboard url
 Deploy the public nginx image from DockerHub into a pod. Nginx is an open source web server that will automatically download from Docker Hub if it’s not available locally.
 
 ```bash
-kubectl run kubectl run nginx --image nginx --port 80 nginx --image nginx --port 80
+kubectl run nginx --image nginx --port 80 nginx --image nginx --port 80
 ```
 
 #### Step5
