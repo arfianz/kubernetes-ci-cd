@@ -26,13 +26,20 @@ To generate this readme: `node readme.js`
  
 - Install Helm
 
- `curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh; chmod 700 get_helm.sh; ./get_helm.sh`
+```bash
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
+chmod 700 get_helm.sh
+./get_helm.sh
+```
 
 - Clone this repository
 - To ensure you are starting with a clean slate, delete any previous minikube contexts.
 
 ```bash
-minikube stop; minikube delete; sudo rm -rf ~/.minikube; sudo rm -rf ~/.kube
+minikube stop
+minikube delete
+sudo rm -rf ~/.minikube
+sudo rm -rf ~/.kube
 ```
 
 ## Tutorial Steps
@@ -146,7 +153,9 @@ docker build -t socat-registry -f applications/socat/Dockerfile applications/soc
 Now run the proxy container from the newly created image. (Note that you may see some errors; this is normal as the commands are first making sure there are no previous instances running.)
 
 ```bash
-docker stop socat-registry; docker rm socat-registry; docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
+docker stop socat-registry
+docker rm socat-registry
+docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
 ```
 
 #### Step15
@@ -212,7 +221,9 @@ docker build -t socat-registry -f applications/socat/Dockerfile applications/soc
 Run the proxy container from the image.
 
 ```bash
-docker stop socat-registry; docker rm socat-registry; docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
+docker stop socat-registry
+docker rm socat-registry
+docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
 ```
 
 #### Step4
@@ -252,7 +263,9 @@ docker build -t socat-registry -f applications/socat/Dockerfile applications/soc
 Run the proxy container from the image.
 
 ```bash
-docker stop socat-registry; docker rm socat-registry; docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
+docker stop socat-registry
+docker rm socat-registry
+docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
 ```
 
 #### Step9
@@ -276,7 +289,8 @@ docker stop socat-registry
 Deploy Jenkins, which we’ll use to create our automated CI/CD pipeline. It will take the pod a minute or two to roll out.
 
 ``bash
-kubectl apply -f manifests/jenkins.yaml; kubectl rollout status deployment/jenkins
+kubectl apply -f manifests/jenkins.yaml
+kubectl rollout status deployment/jenkins
 ```
 
 #### Step12
@@ -352,7 +366,8 @@ minikube service hello-world
 Initialize Helm. This will install Tiller (Helm's server) into our Kubernetes cluster.
 
 ```bash
-helm init --wait --debug; kubectl rollout status deploy/tiller-deploy -n kube-system
+helm init --wait --debug
+kubectl rollout status deploy/tiller-deploy -n kube-system
 ```
 
 #### Step2
@@ -401,7 +416,9 @@ docker build -t socat-registry -f applications/socat/Dockerfile applications/soc
 Run the proxy container from the newly created image.
 
 ```bash
-docker stop socat-registry; docker rm socat-registry; docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
+docker stop socat-registry
+docker rm socat-registry
+docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
 ```
 
 #### Step8
