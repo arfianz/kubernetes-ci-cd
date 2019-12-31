@@ -288,7 +288,7 @@ docker stop socat-registry
 
 Deploy Jenkins, which we’ll use to create our automated CI/CD pipeline. It will take the pod a minute or two to roll out.
 
-``bash
+```bash
 kubectl apply -f manifests/jenkins.yaml
 kubectl rollout status deployment/jenkins
 ```
