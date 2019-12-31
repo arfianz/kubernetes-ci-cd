@@ -361,7 +361,7 @@ minikube service hello-world
 
 ## Part 3
 
-### Step1
+#### Step1
 
 Initialize Helm. This will install Tiller (Helm's server) into our Kubernetes cluster.
 
