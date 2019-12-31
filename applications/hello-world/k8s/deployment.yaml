@@ -30,7 +30,7 @@ spec:
         tier: hello-world
     spec:
       containers:
-      - image: 127.0.0.1:30400/hello-world:$BUILD_TAG
+      - image: 127.0.0.1:30400/hello-world:latest
         name: hello-world
         ports:
         - containerPort: 80
