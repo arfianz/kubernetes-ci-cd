@@ -30,19 +30,19 @@ Diagram
 - Install Helm
 
 ```bash
-curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
-chmod 700 get_helm.sh
-./get_helm.sh
+$ curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
+$ chmod 700 get_helm.sh
+$ ./get_helm.sh
 ```
 
 - Clone this repository
 - To ensure you are starting with a clean slate, delete any previous minikube contexts.
 
 ```bash
-minikube stop
-minikube delete
-sudo rm -rf ~/.minikube
-sudo rm -rf ~/.kube
+$ minikube stop
+$ minikube delete
+$ sudo rm -rf ~/.minikube
+$ sudo rm -rf ~/.kube
 ```
 
 ## Tutorial Steps
@@ -54,7 +54,7 @@ sudo rm -rf ~/.kube
 Start up the Kubernetes cluster with Minikube, giving it some extra resources.
 
 ```bash
-minikube start --memory 8000 --cpus 2
+$ minikube start --memory 8000 --cpus 2
 ```
 
 #### Step2
@@ -62,8 +62,8 @@ minikube start --memory 8000 --cpus 2
 Enable the Minikube add-ons Heapster and Ingress.
 
 ```bash
-minikube addons enable heapster
-minikube addons enable ingress
+$ minikube addons enable heapster
+$ minikube addons enable ingress
 ```
 
 #### Step3
@@ -71,7 +71,7 @@ minikube addons enable ingress
 View the Minikube Dashboard, a web UI for managing deployments.
 
 ```bash
-minikube dashboard url
+$ minikube dashboard url
 ```
 
 #### Step4
@@ -79,7 +79,7 @@ minikube dashboard url
 Deploy the public nginx image from DockerHub into a pod. Nginx is an open source web server that will automatically download from Docker Hub if it’s not available locally.
 
 ```bash
-kubectl run nginx --image nginx --port 80 nginx --image nginx --port 80
+$ kubectl run nginx --image nginx --port 80 nginx --image nginx --port 80
 ```
 
 #### Step5
@@ -87,7 +87,7 @@ kubectl run nginx --image nginx --port 80 nginx --image nginx --port 80
 Create a K8s Service for the deployment. This will expose the nginx pod so you can access it with a web browser.
 
 ```bash
-kubectl expose deployment nginx --type NodePort --port 80
+$ kubectl expose deployment nginx --type NodePort --port 80
 ```
 
 #### Step6
@@ -95,7 +95,7 @@ kubectl expose deployment nginx --type NodePort --port 80
 Launch a web browser to test the service. The nginx welcome page displays, which means the service is up and running.
 
 ```bash
-minikube service nginx
+$ minikube service nginx
 ```
 
 #### Step7
@@ -103,8 +103,8 @@ minikube service nginx
 Delete the nginx deployment and service you created.
 
 ```bash
-kubectl delete service nginx
-kubectl delete deployment nginx
+$ kubectl delete service nginx
+$ kubectl delete deployment nginx
 ```
 
 #### Step8
@@ -112,7 +112,7 @@ kubectl delete deployment nginx
 Set up the cluster registry by applying a .yaml manifest file.
 
 ```bash
-kubectl apply -f manifests/registry.yaml
+$ kubectl apply -f manifests/registry.yaml
 ```
 
 #### Step9
@@ -120,7 +120,7 @@ kubectl apply -f manifests/registry.yaml
 Wait for the registry to finish deploying using the following command. Note that this may take several minutes.
 
 ```bash
-kubectl rollout status deployments/registry
+$ kubectl rollout status deployments/registry
 ```
 
 #### Step10
@@ -128,7 +128,7 @@ kubectl rollout status deployments/registry
 View the registry user interface in a web browser.
 
 ```bash
-minikube service registry-ui
+$ minikube service registry-ui
 ```
 
 #### Step11
@@ -140,7 +140,7 @@ Let’s make a change to an HTML file in the cloned project. Open the /applicati
 Now let’s build an image, giving it a special name that points to our local cluster registry.
 
 ```bash
-docker build -t 127.0.0.1:30400/hello-world:latest -f applications/hello-world/Dockerfile applications/hello-world
+$ docker build -t 127.0.0.1:30400/hello-world:latest -f applications/hello-world/Dockerfile applications/hello-world
 ```
 
 #### Step13
@@ -148,7 +148,7 @@ docker build -t 127.0.0.1:30400/hello-world:latest -f applications/hello-world/D
 We’ve built the image, but before we can push it to the registry, we need to set up a temporary proxy. By default the Docker client can only push to HTTP (not HTTPS) via localhost. To work around this, we’ll set up a Docker container that listens on 127.0.0.1:30400 and forwards to our cluster. First, build the image for our proxy container.
 
 ```bash
-docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
+$ docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
 ```
 
 #### Step14
@@ -156,9 +156,9 @@ docker build -t socat-registry -f applications/socat/Dockerfile applications/soc
 Now run the proxy container from the newly created image. (Note that you may see some errors; this is normal as the commands are first making sure there are no previous instances running.)
 
 ```bash
-docker stop socat-registry
-docker rm socat-registry
-docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
+$ docker stop socat-registry
+$ docker rm socat-registry
+$ docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
 ```
 
 #### Step15
@@ -166,7 +166,7 @@ docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registr
 With our proxy container up and running, we can now push our hello-world image to the local repository.
 
 ```bash
-docker push 127.0.0.1:30400/hello-world:latest
+$ docker push 127.0.0.1:30400/hello-world:latest
 ```
 
 #### Step16
@@ -174,7 +174,7 @@ docker push 127.0.0.1:30400/hello-world:latest
 The proxy’s work is done, so you can go ahead and stop it.
 
 ```bash
-docker stop socat-registry
+$ docker stop socat-registry
 ```
 
 #### Step17
@@ -182,7 +182,7 @@ docker stop socat-registry
 With the image in our cluster registry, the last thing to do is apply the manifest to create and deploy the hello-world pod based on the image.
 
 ```bash
-kubectl apply -f applications/hello-world/k8s/manual-deployment.yaml
+$ kubectl apply -f applications/hello-world/k8s/manual-deployment.yaml
 ```
 
 #### Step18
@@ -190,7 +190,7 @@ kubectl apply -f applications/hello-world/k8s/manual-deployment.yaml
 Launch a web browser and view the service.
 
 ```bash
-minikube service hello-world
+$ minikube service hello-world
 ```
 
 #### Step19
@@ -198,51 +198,51 @@ minikube service hello-world
 Delete the hello-world deployment and service you created. We are going to keep the registry deployment in our cluster as we will need it for the next few parts in our series.
 
 ```bash
-kubectl delete service hello-world
-kubectl delete deployment hello-world
+$ kubectl delete service hello-world
+$ kubectl delete deployment hello-world
 ```
 
 ## Part 2
 
-#### Step1
+#### Step1 (**if necessary, when in previous step the proxy were stop and deleted**)
 
 First, we create image for kubectl that will be used in jenkins pipeline
 
 ```bash
-docker build -t 127.0.0.1:30400/k8s-kubectl:latest -f applications/k8s-kubectl/Dockerfile applications/k8s-kubectl
+$ docker build -t 127.0.0.1:30400/k8s-kubectl:latest -f applications/k8s-kubectl/Dockerfile applications/k8s-kubectl
 ```
-#### Step2
+#### Step2 (**if necessary, when in previous step the proxy were stop and deleted**)
 
 Once again we'll need to set up the Socat Registry proxy container to push images, so let's build it. Feel free to skip this step in case the socat-registry image already exists from Part 1 (to check, run `docker images`).
 
 ```bash
-docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
+$ docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
 ```
 
-#### Step3
+#### Step3 (**if necessary, when in previous step the proxy were stop and deleted**)
 
 Run the proxy container from the image.
 
 ```bash
-docker stop socat-registry
-docker rm socat-registry
-docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
+$ docker stop socat-registry
+$ docker rm socat-registry
+$ docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
 ```
 
 #### Step4
 
-With our proxy container up and running, we can now push our Jenkins image to the local repository.
+With our proxy container up and running, we can now push our kubectl image to the local repository.
 
 ```bash
-docker push 127.0.0.1:30400/k8s-kubectl:latest
+$ docker push 127.0.0.1:30400/k8s-kubectl:latest
 ```
 
-#### Step5
+#### Step5 (**if necessary**)
 
 The proxy’s work is done, so you can go ahead and stop it.
 
 ```bash
-docker stop socat-registry
+$ docker stop socat-registry
 ```
 
 #### Step6
@@ -250,41 +250,41 @@ docker stop socat-registry
 Now, let's build the Jenkins Docker image we'll use in our Kubernetes cluster.
 
 ```bash
-docker build -t 127.0.0.1:30400/jenkins:latest -f applications/jenkins/Dockerfile applications/jenkins
+$ docker build -t 127.0.0.1:30400/jenkins:latest -f applications/jenkins/Dockerfile applications/jenkins
 ```
 
-#### Step7
+#### Step7 (**if necessary, when in previous step the proxy were stop and deleted**)
 
 Once again we'll need to set up the Socat Registry proxy container to push images, so let's build it. Feel free to skip this step in case the socat-registry image already exists from Part 1 (to check, run `docker images`).
 
 ```bash
-docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
+$ docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
 ```
 
-#### Step8
+#### Step8 (**if necessary, when in previous step the proxy were stop and deleted**)
 
 Run the proxy container from the image.
 
 ```bash
-docker stop socat-registry
-docker rm socat-registry
-docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
+$ docker stop socat-registry
+$ docker rm socat-registry
+$ docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
 ```
 
-#### Step9
+#### Step9 
 
 With our proxy container up and running, we can now push our Jenkins image to the local repository.
 
 ```bash
-docker push 127.0.0.1:30400/jenkins:latest
+$ docker push 127.0.0.1:30400/jenkins:latest
 ```
 
-#### Step10
+#### Step10 (**if necessary**)
 
 The proxy’s work is done, so you can go ahead and stop it.
 
 ```bash
-docker stop socat-registry
+$ docker stop socat-registry
 ```
 
 #### Step11
@@ -292,8 +292,8 @@ docker stop socat-registry
 Deploy Jenkins, which we’ll use to create our automated CI/CD pipeline. It will take the pod a minute or two to roll out.
 
 ```bash
-kubectl apply -f manifests/jenkins.yaml
-kubectl rollout status deployment/jenkins
+$ kubectl apply -f manifests/jenkins.yaml
+$ kubectl rollout status deployment/jenkins
 ```
 
 #### Step12
@@ -301,7 +301,7 @@ kubectl rollout status deployment/jenkins
 Open the Jenkins UI in a web browser.
 
 ```bash
-minikube service jenkins
+$ minikube service jenkins
 ```
 
 #### Step13
@@ -309,7 +309,7 @@ minikube service jenkins
 Display the Jenkins admin password with the following command, and right-click to copy it.
 
 ```bash
-kubectl exec -it `kubectl get pods --selector=app=jenkins --output=jsonpath={.items..metadata.name}` cat /var/jenkins_home/secrets/initialAdminPassword
+$ kubectl exec -it `kubectl get pods --selector=app=jenkins --output=jsonpath={.items..metadata.name}` cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
 #### Step14
@@ -327,12 +327,12 @@ Before we create a pipeline, we first need to provision the Kubernetes Continuou
 #### Step17
 
 The following values must be entered precisely as indicated:
-- Kind: `Kubernetes configuration (kubeconfig)`
-- ID: `demo_kubeconfig` as it related to Jenkinsfile
-- Kubeconfig: `From a file on the Jenkins master`
-- specify the file path: `/var/jenkins_home/.kube/config`
+- **Kind**: `Kubernetes configuration (kubeconfig)`
+- **ID**: `demo_kubeconfig` as it related to Jenkinsfile
+- **Kubeconfig**: `From a file on the Jenkins master`
+- specify the **file path**: `/var/jenkins_home/.kube/config`
 
-Finally click *Ok*.
+Finally click **Ok**.
 
 #### Step18
 
@@ -351,7 +351,7 @@ Change the **SCM** to **Git**. Change the **Repository URL** to be the URL of yo
 After all pipeline stages are colored green as complete, view the Hello-World application.
 
 ```bash
-minikube service hello-world
+$ minikube service hello-world
 ```
 
 #### Step22
@@ -359,7 +359,7 @@ minikube service hello-world
 Push a change to your fork. Run the job again. View the changes.
 
 ```bash
-minikube service hello-world
+$ minikube service hello-world
 ```
 
 ## Part 3
@@ -369,8 +369,8 @@ minikube service hello-world
 Initialize Helm. This will install Tiller (Helm's server) into our Kubernetes cluster.
 
 ```bash
-helm init --wait --debug
-kubectl rollout status deploy/tiller-deploy -n kube-system
+$ helm init --wait --debug
+$ kubectl rollout status deploy/tiller-deploy -n kube-system
 ```
 
 #### Step2
@@ -378,7 +378,7 @@ kubectl rollout status deploy/tiller-deploy -n kube-system
 We will deploy the etcd operator onto the cluster using a Helm Chart.
 
 ```bash
-helm install stable/etcd-operator --version 0.8.0 --name etcd-operator --debug --wait
+$ helm install stable/etcd-operator --version 0.8.0 --name etcd-operator --debug --wait
 ```
 
 #### Step3
@@ -386,8 +386,8 @@ helm install stable/etcd-operator --version 0.8.0 --name etcd-operator --debug -
 Deploy the etcd cluster and K8s Services for accessing the cluster.
 
 ```bash
-kubectl create -f manifests/etcd-cluster.yaml
-kubectl create -f manifests/etcd-service.yaml
+$ kubectl create -f manifests/etcd-cluster.yaml
+$ kubectl create -f manifests/etcd-service.yaml
 ```
 
 #### Step4
@@ -395,7 +395,7 @@ kubectl create -f manifests/etcd-service.yaml
 The crossword application is a multi-tier application whose services depend on each other. We will create three K8s Services so that the applications can communicate with one another.
 
 ```bash
-kubectl apply -f manifests/all-services.yaml
+$ kubectl apply -f manifests/all-services.yaml
 ```
 
 #### Step5
@@ -403,25 +403,25 @@ kubectl apply -f manifests/all-services.yaml
 Now we're going to walk through an initial build of the monitor-scale application.
 
 ```bash
-docker build -t 127.0.0.1:30400/monitor-scale:`git rev-parse --short HEAD` -f applications/monitor-scale/Dockerfile applications/monitor-scale
+$ docker build -t 127.0.0.1:30400/monitor-scale:`git rev-parse --short HEAD` -f applications/monitor-scale/Dockerfile applications/monitor-scale
 ```
 
-#### Step6
+#### Step6 (**if necessary, when in previous step the proxy were stop and deleted**)
 
 Once again we'll need to set up the Socat Registry proxy container to push the monitor-scale image to our registry, so let's build it. Feel free to skip this step in case the socat-registry image already exists from Part 2 (to check, run `docker images`).
 
 ```bash
-docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
+$ docker build -t socat-registry -f applications/socat/Dockerfile applications/socat
 ```
 
-#### Step7
+#### Step7 (**if necessary, when in previous step the proxy were stop and deleted**)
 
 Run the proxy container from the newly created image.
 
 ```bash
-docker stop socat-registry
-docker rm socat-registry
-docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
+$ docker stop socat-registry
+$ docker rm socat-registry
+$ docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registry -p 30400:5000 socat-registry
 ```
 
 #### Step8
@@ -429,15 +429,15 @@ docker run -d -e "REG_IP=`minikube ip`" -e "REG_PORT=30400" --name socat-registr
 Push the monitor-scale image to the registry.
 
 ```bash
-docker push 127.0.0.1:30400/monitor-scale:`git rev-parse --short HEAD`
+$ docker push 127.0.0.1:30400/monitor-scale:`git rev-parse --short HEAD`
 ```
 
-#### Step9
+#### Step9 (**if necessary**)
 
 The proxy’s work is done, so go ahead and stop it.
 
 ```bash
-docker stop socat-registry
+$ docker stop socat-registry
 ```
 
 #### Step10
@@ -445,7 +445,7 @@ docker stop socat-registry
 Open the registry UI and verify that the monitor-scale image is in our local registry.
 
 ```bash
-minikube service registry-ui
+$ minikube service registry-ui
 ```
 
 #### Step11
@@ -453,7 +453,7 @@ minikube service registry-ui
 Monitor-scale has the functionality to let us scale our puzzle app up and down through the Kr8sswordz UI, therefore we'll need to do some RBAC work in order to provide monitor-scale with the proper rights.
 
 ```bash
-kubectl apply -f manifests/monitor-scale-serviceaccount.yaml
+$ kubectl apply -f manifests/monitor-scale-serviceaccount.yaml
 ```
 
 #### Step12
@@ -461,7 +461,7 @@ kubectl apply -f manifests/monitor-scale-serviceaccount.yaml
 Create the monitor-scale deployment and the Ingress defining the hostname by which this service will be accessible to the other services.
 
 ```bash
-sed 's#127.0.0.1:30400/monitor-scale:$BUILD_TAG#127.0.0.1:30400/monitor-scale:'`git rev-parse --short HEAD`'#' applications/monitor-scale/k8s/deployment.yaml | kubectl apply -f -
+$ sed 's#127.0.0.1:30400/monitor-scale:$BUILD_TAG#127.0.0.1:30400/monitor-scale:'`git rev-parse --short HEAD`'#' applications/monitor-scale/k8s/deployment.yaml | kubectl apply -f -
 ```
 
 #### Step13
@@ -469,7 +469,7 @@ sed 's#127.0.0.1:30400/monitor-scale:$BUILD_TAG#127.0.0.1:30400/monitor-scale:'`
 Wait for the monitor-scale deployment to finish.
 
 ```bash
-kubectl rollout status deployment/monitor-scale
+$ kubectl rollout status deployment/monitor-scale
 ```
 
 #### Step14
@@ -477,7 +477,7 @@ kubectl rollout status deployment/monitor-scale
 View pods to see the monitor-scale pod running.
 
 ```bash
-kubectl get pods
+$ kubectl get pods
 ```
 
 #### Step15
@@ -485,7 +485,7 @@ kubectl get pods
 View services to see the monitor-scale service.
 
 ```bash
-kubectl get services
+$ kubectl get services
 ```
 
 #### Step16
@@ -493,7 +493,7 @@ kubectl get services
 View ingress rules to see the monitor-scale ingress rule.
 
 ```bash
-kubectl get ingress
+$ kubectl get ingress
 ```
 
 #### Step17
@@ -501,7 +501,7 @@ kubectl get ingress
 View deployments to see the monitor-scale deployment.
 
 ```bash
-kubectl get deployments
+$ kubectl get deployments
 ```
 
 #### Step18
@@ -509,7 +509,7 @@ kubectl get deployments
 We will run a script to bootstrap the puzzle and mongo services, creating Docker images and storing them in the local registry. The puzzle.sh script runs through the same build, proxy, push, and deploy steps we just ran through manually for both services.
 
 ```bash
-scripts/puzzle.sh
+$ scripts/puzzle.sh
 ```
 
 #### Step19
@@ -517,8 +517,8 @@ scripts/puzzle.sh
 Check to see if the puzzle and mongo services have been deployed.
 
 ```bash
-kubectl rollout status deployment/puzzle
-kubectl rollout status deployment/mongo
+$ kubectl rollout status deployment/puzzle
+$ kubectl rollout status deployment/mongo
 ```
 
 #### Step20
@@ -526,7 +526,7 @@ kubectl rollout status deployment/mongo
 Bootstrap the kr8sswordz frontend web application. This script follows the same build proxy, push, and deploy steps that the other services followed.
 
 ```bash
-scripts/kr8sswordz-pages.sh
+$ scripts/kr8sswordz-pages.sh
 ```
 
 #### Step21
@@ -534,7 +534,7 @@ scripts/kr8sswordz-pages.sh
 Check to see if the frontend has been deployed.
 
 ```bash
-kubectl rollout status deployment/kr8sswordz
+$ kubectl rollout status deployment/kr8sswordz
 ```
 
 #### Step22
@@ -542,7 +542,7 @@ kubectl rollout status deployment/kr8sswordz
 Check to see that all the pods are running.
 
 ```bash
-kubectl get pods
+$ kubectl get pods
 ```
 
 #### Step23
@@ -550,7 +550,7 @@ kubectl get pods
 Start the web application in your default browser. You may have to refresh your browser so that the puzzle appears properly.
 
 ```bash
-minikube service kr8sswordz
+$ minikube service kr8sswordz
 ```
 
 ## Part 4
@@ -560,7 +560,7 @@ minikube service kr8sswordz
 Enter the following command to open the Jenkins UI in a web browser. Log in to Jenkins using the username and password you previously set up.
 
 ```bash
-minikube service jenkins
+$ minikube service jenkins
 ```
 
 #### Step2
@@ -588,7 +588,7 @@ When you are finished, click Save. On the left, click Build Now to run the new p
 View the Kr8sswordz application.
 
 ```bash
-minikube service kr8sswordz
+$ minikube service kr8sswordz
 ```
 
 #### Step8
@@ -622,18 +622,19 @@ If you need to walk through the steps in the tutorial again (or more quickly), w
 
 - Install NodeJS.
 - Install the scripts.
+
 ```bash
-cd ~/kubernetes-ci-cd
-npm install
+$ cd ~/kubernetes-ci-cd
+$ npm install
 ```
 
 Begin the desired section:
 
 ```bash
-npm run part1
-npm run part2
-npm run part3
-npm run part4
+$ npm run part1
+$ npm run part2
+$ npm run part3
+$ npm run part4
 ```
 
 ## LICENSE
